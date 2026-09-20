@@ -7,46 +7,59 @@
 .atom/
 .build/
 .buildlog/
-.history
+.history/
 .svn/
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# IDEs
 *.iml
 *.ipr
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
+# Flutter / Dart
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
+.pub-preload-cache/
 .pub/
 /build/
 /coverage/
+
+# Environment files and local secrets
 .env
 .env.*
 !.env.example
 env.*.json
 !env.development.json.example
+**/android/key.properties
+*.jks
 
-# Symbolication related
+# Android generated/local files
+.gradle/
+**/android/captures/
+**/android/local.properties
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+
+# Apple generated/local files
+**/Pods/
+**/.symlinks/
+**/xcuserdata/
+**/Flutter/ephemeral/
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+
+# Build symbols
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-/agents/*
-/docs/*
+# Local project helpers
+/agents/
+/docs/
