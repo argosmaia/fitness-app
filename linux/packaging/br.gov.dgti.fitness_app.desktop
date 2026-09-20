@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Vitta Fitness
+Comment=Acompanhe treino, alimentação, sono e hidratação
+Exec=fitness_app
+Icon=br.gov.dgti.fitness_app
+Terminal=false
+Categories=Utility;
+StartupWMClass=br.gov.dgti.fitness_app
