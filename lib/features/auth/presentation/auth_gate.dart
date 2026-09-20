@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../dashboard/presentation/home_shell.dart';
 import 'auth_controller.dart';
 import 'login_page.dart';
+import 'verify_email_page.dart';
 
 final class AuthGate extends ConsumerWidget {
   const AuthGate({super.key});
@@ -13,7 +14,10 @@ final class AuthGate extends ConsumerWidget {
         loading: () =>
             const Scaffold(body: Center(child: CircularProgressIndicator())),
         error: (_, _) => const LoginPage(),
-        data: (session) =>
-            session == null ? const LoginPage() : HomeShell(user: session.user),
+        data: (session) => session == null
+            ? const LoginPage()
+            : session.emailVerificationRequired
+            ? VerifyEmailPage(email: session.user?.email ?? '')
+            : HomeShell(user: session.user),
       );
 }

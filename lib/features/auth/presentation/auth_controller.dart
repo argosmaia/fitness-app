@@ -27,6 +27,16 @@ final class AuthController extends AsyncNotifier<AuthSession?> {
     state = await AsyncValue.guard(() => _repository.register(command));
   }
 
+  Future<void> sendEmailVerification() => _repository.sendEmailVerification();
+
+  Future<bool> confirmEmailVerification(String code) async {
+    final result = await AsyncValue.guard(
+      () => _repository.confirmEmailVerification(code),
+    );
+    state = result;
+    return !result.hasError;
+  }
+
   Future<void> logout() async {
     state = const AsyncLoading();
     await _repository.logout();

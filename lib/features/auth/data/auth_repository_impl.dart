@@ -13,9 +13,16 @@ final class ApiAuthRepository implements AuthRepository {
   Future<AuthSession> login(LoginCommand command) =>
       _authenticate(ApiEndpoints.login, command.toJson());
   @override
-  Future<AuthSession> register(RegisterCommand command) =>
-      _authenticate(ApiEndpoints.register, command.toJson());
-  Future<AuthSession> _authenticate(String path, JsonMap body) async {
+  Future<AuthSession> register(RegisterCommand command) => _authenticate(
+    ApiEndpoints.register,
+    command.toJson(),
+    registration: true,
+  );
+  Future<AuthSession> _authenticate(
+    String path,
+    JsonMap body, {
+    bool registration = false,
+  }) async {
     final response = await _client.post<JsonMap>(
       path,
       body: body,
@@ -26,10 +33,14 @@ final class ApiAuthRepository implements AuthRepository {
       throw StateError('A API não retornou um token.');
     await _tokens.write(token);
     final user = response.data['user'];
+    final profile = user is Map
+        ? UserProfile.fromJson(Map<String, dynamic>.from(user))
+        : null;
     return AuthSession(
-      user is Map
-          ? UserProfile.fromJson(Map<String, dynamic>.from(user))
-          : null,
+      profile,
+      emailVerificationRequired:
+          profile?.emailVerified == false ||
+          (registration && profile?.emailVerified != true),
     );
   }
 
@@ -41,11 +52,37 @@ final class ApiAuthRepository implements AuthRepository {
         ApiEndpoints.profile,
         decode: _map,
       );
-      return AuthSession(UserProfile.fromJson(response.data));
+      final profile = UserProfile.fromJson(response.data);
+      return AuthSession(
+        profile,
+        emailVerificationRequired: profile.emailVerified == false,
+      );
     } catch (_) {
       await _tokens.clear();
       return null;
     }
+  }
+
+  @override
+  Future<void> sendEmailVerification() async {
+    await _client.post<Object?>(
+      ApiEndpoints.sendEmailVerification,
+      decode: (value) => value,
+    );
+  }
+
+  @override
+  Future<AuthSession> confirmEmailVerification(String code) async {
+    await _client.post<Object?>(
+      ApiEndpoints.confirmEmailVerification,
+      body: {'code': code.trim()},
+      decode: (value) => value,
+    );
+    final response = await _client.get<JsonMap>(
+      ApiEndpoints.profile,
+      decode: _map,
+    );
+    return AuthSession(UserProfile.fromJson(response.data));
   }
 
   @override
